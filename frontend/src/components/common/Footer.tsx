@@ -1,132 +1,91 @@
-"use client";
-
-import {
-	FacebookIcon,
-	InstagramIcon,
-	LinkedinIcon,
-	YoutubeIcon
-} from "lucide-react";
-import { motion, useReducedMotion } from "motion/react";
-import type React from "react";
-import type { ComponentProps, ReactNode } from "react";
-
-type FooterLink = {
-	title: string;
-	href: string;
-	icon?: React.ComponentType<{ className?: string }>;
-};
-
-type FooterSection = {
-	label: string;
-	links: FooterLink[];
-};
-
-const footerLinks: FooterSection[] = [
-	{
-		label: "Product",
-		links: [
-			{ title: "Features", href: "#" },
-			{ title: "Pricing", href: "#" },
-			{ title: "Testimonials", href: "#" },
-			{ title: "Integration", href: "#" },
-		],
-	},
-	{
-		label: "Company",
-		links: [
-			{ title: "FAQs", href: "#" },
-			{ title: "About Us", href: "#" },
-			{ title: "Privacy Policy", href: "#" },
-			{ title: "Terms of Services", href: "#" },
-		],
-	},
-	{
-		label: "Resources",
-		links: [
-			{ title: "Blog", href: "#" },
-			{ title: "Changelog", href: "#" },
-			{ title: "Brand", href: "#" },
-			{ title: "Help", href: "#" },
-		],
-	},
-	{
-		label: "Social Links",
-		links: [
-			{ title: "Facebook", href: "#", icon: FacebookIcon },
-			{ title: "Instagram", href: "#", icon: InstagramIcon },
-			{ title: "Youtube", href: "#", icon: YoutubeIcon },
-			{ title: "LinkedIn", href: "#", icon: LinkedinIcon },
-		],
-	},
-];
+import React, { useEffect, useState } from "react";
+import { Link } from 'react-router-dom';
+import { Facebook, Instagram, Linkedin, Youtube, BookOpen } from "lucide-react";
 
 export default function Footer() {
-	return (
-		<footer className="relative mx-auto flex w-full max-w-5xl flex-col items-center justify-center rounded-t-4xl border-t bg-[radial-gradient(35%_128px_at_50%_0%,theme(backgroundColor.white/8%),transparent)] px-4 py-6 md:rounded-t-6xl md:px-6">
-			<div className="-translate-x-1/2 -translate-y-1/2 absolute top-0 right-1/2 left-1/2 h-px w-1/3 rounded-full bg-foreground/20 blur" />
+    const [isLoggedIn, setIsLoggedIn] = useState(false);
 
-			<div className="grid w-full gap-8 xl:grid-cols-3 xl:gap-8">
-				<AnimatedContainer className="space-y-4">
-					
-					<p className="mt-8 text-muted-foreground text-sm md:mt-0">
-						&copy; {new Date().getFullYear()} efferd, All rights reserved
-					</p>
-				</AnimatedContainer>
+    useEffect(() => {
+        const userInfo = JSON.parse(localStorage.getItem('userInfoLms') || '{}');
+        setIsLoggedIn(!!userInfo?.token);
+    }, []);
 
-				<div className="mt-10 grid grid-cols-2 gap-8 md:grid-cols-4 xl:col-span-2 xl:mt-0">
-					{footerLinks.map((section, index) => (
-						<AnimatedContainer delay={0.1 + index * 0.1} key={section.label}>
-							<div className="mb-10 md:mb-0">
-								<h3 className="text-xs">{section.label}</h3>
-								<ul className="mt-4 space-y-2 text-muted-foreground text-sm">
-									{section.links.map((link) => (
-										<li key={link.title}>
-											<a
-												className="inline-flex items-center transition-all duration-300 hover:text-foreground"
-												href={link.href}
-												key={`${section.label}-${link.title}`}
-											>
-												{link.icon && <link.icon className="me-1 size-4" />}
-												{link.title}
-											</a>
-										</li>
-									))}
-								</ul>
-							</div>
-						</AnimatedContainer>
-					))}
-				</div>
-			</div>
-		</footer>
-	);
-}
+    return (
+        <footer className="pt-5 mt-5 border-top">
+            <div className="container py-5">
+                <div className="row gy-5">
+                    <div className="col-lg-4 pe-lg-5">
+                        <div className="d-flex align-items-center gap-2 mb-4">
+                            <div className="bg-primary text-white p-2 rounded-lg d-flex align-items-center justify-content-center" style={{ borderRadius: '8px' }}>
+                                <BookOpen size={24} />
+                            </div>
+                            <h4 className="mb-0 fw-bold">Smart Learning</h4>
+                        </div>
+                        <p className="text-muted mb-4 pe-lg-4">
+                            Join our Learning Management System and explore a wide range of premium courses to enhance your skills and achieve your goals anywhere, anytime.
+                        </p>
+                        <div className="d-flex gap-3">
+                            <a href="#" className="btn btn-outline-light rounded-circle p-2 d-flex align-items-center justify-content-center" style={{width: '40px', height: '40px'}}>
+                                <Facebook size={18} />
+                            </a>
+                            <a href="#" className="btn btn-outline-light rounded-circle p-2 d-flex align-items-center justify-content-center" style={{width: '40px', height: '40px'}}>
+                                <Instagram size={18} />
+                            </a>
+                            <a href="#" className="btn btn-outline-light rounded-circle p-2 d-flex align-items-center justify-content-center" style={{width: '40px', height: '40px'}}>
+                                <Youtube size={18} />
+                            </a>
+                            <a href="#" className="btn btn-outline-light rounded-circle p-2 d-flex align-items-center justify-content-center" style={{width: '40px', height: '40px'}}>
+                                <Linkedin size={18} />
+                            </a>
+                        </div>
+                    </div>
+                    
+                    <div className={`col-lg-2 col-md-4 col-sm-6 ${isLoggedIn ? 'offset-lg-2' : ''}`}>
+                        <h5 className="fw-bold mb-4">Product</h5>
+                        <ul className="list-unstyled d-flex flex-column gap-3">
+                            <li><Link to="/courses" className="text-decoration-none transition-all text-muted">Features</Link></li>
+                            <li><Link to="/courses" className="text-decoration-none transition-all text-muted">Pricing</Link></li>
+                            <li><Link to="/courses" className="text-decoration-none transition-all text-muted">Testimonials</Link></li>
+                        </ul>
+                    </div>
+                    
+                    <div className="col-lg-2 col-md-4 col-sm-6">
+                        <h5 className="fw-bold mb-4">Company</h5>
+                        <ul className="list-unstyled d-flex flex-column gap-3">
+                            <li><Link to="/" className="text-decoration-none transition-all text-muted">About Us</Link></li>
+                            <li><Link to="/" className="text-decoration-none transition-all text-muted">Privacy Policy</Link></li>
+                            <li><Link to="/" className="text-decoration-none transition-all text-muted">Terms of Service</Link></li>
+                        </ul>
+                    </div>
 
-type ViewAnimationProps = {
-	delay?: number;
-	className?: ComponentProps<typeof motion.div>["className"];
-	children: ReactNode;
-};
-
-function AnimatedContainer({
-	className,
-	delay = 0.1,
-	children,
-}: ViewAnimationProps) {
-	const shouldReduceMotion = useReducedMotion();
-
-	if (shouldReduceMotion) {
-		return children;
-	}
-
-	return (
-		<motion.div
-			className={className}
-			initial={{ filter: "blur(4px)", translateY: -8, opacity: 0 }}
-			transition={{ delay, duration: 0.8 }}
-			viewport={{ once: true }}
-			whileInView={{ filter: "blur(0px)", translateY: 0, opacity: 1 }}
-		>
-			{children}
-		</motion.div>
-	);
+                    {!isLoggedIn && (
+                        <div className="col-lg-4 col-md-4">
+                            <h5 className="fw-bold mb-4">Newsletter</h5>
+                            <p className="text-muted mb-4">Subscribe to get the latest courses updates and news right in your inbox.</p>
+                            <div className="d-flex p-1 bg-light rounded-pill border border-light">
+                                <input 
+                                    type="email" 
+                                    className="form-control bg-transparent border-0 shadow-none" 
+                                    placeholder="Enter your email"
+                                />
+                                <button className="btn btn-primary rounded-pill px-4 fw-bold">Subscribe</button>
+                            </div>
+                        </div>
+                    )}
+                </div>
+            </div>
+            
+            <div className="border-top py-4 mt-2">
+                <div className="container d-flex flex-column flex-md-row justify-content-between align-items-center gap-3">
+                    <p className="mb-0 text-muted small">
+                        &copy; {new Date().getFullYear()} Smart Learning LMS. All rights reserved.
+                    </p>
+                    <div className="d-flex gap-4 small">
+                        <Link to="/" className="text-decoration-none text-muted">English (US)</Link>
+                        <Link to="/" className="text-decoration-none text-muted">Support</Link>
+                    </div>
+                </div>
+            </div>
+        </footer>
+    );
 }

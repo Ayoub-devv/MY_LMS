@@ -7,6 +7,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Facades\Auth;
+use CloudinaryLabs\CloudinaryLaravel\Facades\Cloudinary;
 
 
 class AccountController extends Controller
@@ -63,7 +64,8 @@ class AccountController extends Controller
                 'status' => 200,
                 'token' => $token,
                 'name' => $user->name,
-                'id' => Auth::user()->id
+                'id' => Auth::user()->id,
+                'role' => $user->role
             ],200);
         } else {
             return response()->json([
@@ -73,4 +75,89 @@ class AccountController extends Controller
         }
     }
    
+    public function changePassword(Request $request)
+    {
+        $validator = Validator::make($request->all(), [
+            'old_password' => 'required',
+            'new_password' => 'required|min:6',
+            'confirm_password' => 'required|same:new_password',
+        ]);
+
+        if ($validator->fails()) {
+            return response()->json([
+                'status' => 400,
+                'errors' => $validator->errors()
+            ], 400);
+        }
+
+        $user = User::find(Auth::user()->id);
+
+        if (Hash::check($request->old_password, $user->password)) {
+            $user->password = Hash::make($request->new_password);
+            $user->save();
+
+            return response()->json([
+                'status' => 200,
+                'message' => 'Password changed successfully'
+            ], 200);
+        } else {
+            return response()->json([
+                'status' => 400,
+                'message' => 'Old password does not match'
+            ], 400);
+        }
+    }
+
+    public function getProfile()
+    {
+        $user = User::find(Auth::user()->id);
+        return response()->json([
+            'status' => 200,
+            'data' => $user
+        ], 200);
+    }
+
+    public function updateProfile(Request $request)
+    {
+        $user = User::find(Auth::user()->id);
+        
+        $validator = Validator::make($request->all(), [
+            'name' => 'required|min:3',
+            'email' => 'required|email|unique:users,email,'.$user->id,
+            'mobile' => 'nullable|numeric',
+            'designation' => 'nullable|string|max:255',
+            'language' => 'nullable|string|max:100',
+            'nationality' => 'nullable|string|max:100',
+            'birthday' => 'nullable|date',
+            'gender' => 'nullable|in:male,female,other',
+            'bio' => 'nullable|string',
+            'image' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048'
+        ]);
+
+        if ($validator->fails()) {
+            return response()->json([
+                'status' => 400,
+                'errors' => $validator->errors()
+            ], 400);
+        }
+
+        $data = $request->except('image');
+        
+        if ($request->hasFile('image')) {
+            // Upload to Cloudinary
+            $uploaded = Cloudinary::upload($request->file('image')->getRealPath(), [
+                'folder' => 'lms/profiles',
+                'transformation' => ['width' => 300, 'height' => 300, 'crop' => 'fill', 'quality' => 'auto']
+            ]);
+            $data['profile_pic'] = $uploaded->getSecurePath();
+        }
+
+        $user->update($data);
+
+        return response()->json([
+            'status' => 200,
+            'message' => 'Profile updated successfully',
+            'data' => $user
+        ], 200);
+    }
 }
