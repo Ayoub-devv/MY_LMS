@@ -1,7 +1,7 @@
 import { useState } from 'react'
 import { BrowserRouter, Route, Routes } from 'react-router-dom'
 import Home from './components/pages/Home'
-import Courses from './components/pages/courses'
+import Courses from './components/pages/Courses'
 import Login from './components/pages/Login'
 import Register from './components/pages/Register';
 import MyCourses from './components/pages/account/MyCourses'
