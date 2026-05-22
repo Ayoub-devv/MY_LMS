@@ -1,5 +1,6 @@
-export const apiUrl = import.meta.env.VITE_API_URL;
-export const fileUrl = import.meta.env.VITE_API_URL ? import.meta.env.VITE_API_URL.replace('/api', '') : 'http://localhost:8000';
+const NGROK_API = 'https://correct-spiffy-exorcism.ngrok-free.dev/api';
+export const apiUrl = import.meta.env.VITE_API_URL || NGROK_API;
+export const fileUrl = (import.meta.env.VITE_API_URL || NGROK_API).replace('/api', '');
 
 const userInfo = JSON.parse(localStorage.getItem('userInfoLms') || '{}');
 
